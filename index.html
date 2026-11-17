@@ -241,7 +241,8 @@ function showQuiz() {
   const area = document.getElementById("quizChoices");
   area.innerHTML = "";
 
-  q.choices.forEach(choice => {
+  const shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+shuffledChoices.forEach(choice => {
     const btn = document.createElement("button");
     btn.textContent = choice;
     btn.style.display = "block";

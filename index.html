@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>漢字クエスト</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Arial", "Meiryo", sans-serif;
+  background: #f3f5fb;
+  color: #27324a;
+}
+header {
+  background: linear-gradient(135deg,#5369d8,#7959c8);
+  color: white;
+  padding: 25px 20px;
+  border-radius: 0 0 25px 25px;
+}
+header h1 { margin: 0 0 8px; font-size: 25px; }
+header p { margin: 0; opacity: .9; }
+main { max-width: 650px; margin: auto; padding: 16px; }
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 12px #26345a12;
+}
+.row { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.label { color:#77819a; font-size:13px; }
+.big { font-size:27px; font-weight:bold; }
+.bar { background:#e9ecf5; height:12px; border-radius:20px; overflow:hidden; margin-top:10px; }
+.fill { background:#6678dc; height:100%; width:0; transition:width .3s; }
+.mission {
+  display:flex; justify-content:space-between; align-items:center;
+  gap:10px; padding:13px 0; border-bottom:1px solid #edf0f6;
+}
+.mission:last-child { border:0; }
+.points { color:#596bd0; font-weight:bold; white-space:nowrap; }
+button {
+  border:0; border-radius:12px; padding:12px 16px;
+  background:#596bd0; color:white; font-size:14px;
+  font-weight:bold; cursor:pointer;
+}
+button:disabled { background:#b8bfd0; cursor:default; }
+.mission button { min-width:76px; }
+.notice { color:#77819a; font-size:12px; line-height:1.6; }
+footer { text-align:center; color:#9aa2b4; font-size:12px; padding:15px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚔️ 漢字クエスト</h1>
+  <p>毎日の冒険で、漢字マスターを目指そう！</p>
+</header>
+
+<main>
+  <section class="card">
+    <div class="row">
+      <div>
+        <div class="label">冒険者ランク</div>
+        <div class="big" id="level">レベル 1</div>
+      </div>
+      <div style="font-size:42px">🛡️</div>
+    </div>
+    <div class="row" style="margin-top:15px">
+      <span class="label">経験値</span>
+      <strong id="xpText">0 / 100 XP</strong>
+    </div>
+    <div class="bar"><div class="fill" id="xpBar"></div></div>
+  </section>
+
+  <section class="card">
+    <div class="row">
+      <div>
+        <div class="label">今週の交換ポイント</div>
+        <div class="big"><span id="weeklyPoints">0</span> pt</div>
+      </div>
+      <div style="font-size:35px">🪙</div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <span class="label">今週のお小遣い目安</span>
+      <strong id="money">0円</strong>
+    </div>
+    <div class="bar"><div class="fill" id="moneyBar"></div></div>
+    <p class="notice">最大2,000 ptで200円。交換は保護者の確認後に行います。</p>
+  </section>
+
+  <section class="card">
+    <div class="row">
+      <h2 style="font-size:19px;margin:0">📜 今日のミッション</h2>
+      <strong>⏱ 15分</strong>
+    </div>
+    <p class="notice">ミッションを達成したら「達成！」を押そう。</p>
+    <div id="missions"></div>
+    <div class="row" style="margin-top:15px">
+      <strong>今日の獲得ポイント</strong>
+      <strong id="todayPoints">0 pt</strong>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 style="font-size:19px;margin-top:0">🎁 今週の目標</h2>
+    <div class="row"><span>100円</span><strong>1,000 pt</strong></div>
+    <div class="row" style="margin-top:10px"><span>150円</span><strong>1,500 pt</strong></div>
+    <div class="row" style="margin-top:10px"><span>200円</span><strong>2,000 pt</strong></div>
+    <p class="notice">週間ポイントは毎週月曜日に更新されます。レベルと経験値は残ります。</p>
+  </section>
+</main>
+
+<footer>KANJI QUEST | 学習記録はこの端末に保存されます</footer>
+
+<script>
+const tasks = [
+  {name:"今日の漢字の読み", detail:"読み問題に挑戦する", point:30},
+  {name:"漢字を書く練習", detail:"漢字の形を確認して練習する", point:40},
+  {name:"間違えた漢字の修正", detail:"間違いを見直して正しく書く", point:50},
+  {name:"苦手漢字の復習", detail:"苦手な漢字をもう一度確認する", point:50},
+  {name:"新しい漢字への挑戦", detail:"新しい漢字を学ぶ", point:50},
+  {name:"今日の振り返り", detail:"今日の学習を振り返る", point:30}
+];
+
+function getDateKey() {
+  const d = new Date();
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+function getWeekKey() {
+  const d = new Date();
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate()-day+1);
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+let data;
+try {
+  data = JSON.parse(localStorage.getItem("kanjiQuestData")) || {};
+} catch(e) { data = {}; }
+
+function save() {
+  localStorage.setItem("kanjiQuestData", JSON.stringify(data));
+}
+function prepare() {
+  if(data.date !== getDateKey()) {
+    data.date = getDateKey();
+    data.done = [];
+  }
+  if(data.week !== getWeekKey()) {
+    data.week = getWeekKey();
+    data.weekPoints = 0;
+  }
+  data.xp = data.xp || 0;
+  data.weekPoints = data.weekPoints || 0;
+  data.done = data.done || [];
+  save();
+}
+function render() {
+  prepare();
+  const total = data.xp;
+  const level = Math.floor(total/100)+1;
+  const xp = total%100;
+  document.getElementById("level").textContent = "レベル "+level;
+  document.getElementById("xpText").textContent = xp+" / 100 XP";
+  document.getElementById("xpBar").style.width = xp+"%";
+
+  const wp = data.weekPoints;
+  document.getElementById("weeklyPoints").textContent = wp;
+  document.getElementById("money").textContent = Math.min(200,Math.floor(wp/10))+"円";
+  document.getElementById("moneyBar").style.width = Math.min(100,wp/20)+"%";
+
+  let today = 0;
+  const area = document.getElementById("missions");
+  area.innerHTML = "";
+  tasks.forEach((task,index) => {
+    const done = data.done.includes(index);
+    if(done) today += task.point;
+    const div = document.createElement("div");
+    div.className = "mission";
+    const info = document.createElement("div");
+    info.innerHTML = "<strong>"+task.name+"</strong><div class='notice'>"+task.detail+"</div>";
+    const right = document.createElement("div");
+    right.style.textAlign = "right";
+    const points = document.createElement("div");
+    points.className = "points";
+    points.textContent = "+"+task.point+" pt";
+    const btn = document.createElement("button");
+    btn.textContent = done ? "達成済み" : "達成！";
+    btn.disabled = done;
+    btn.onclick = () => {
+      if(data.done.includes(index)) return;
+      data.done.push(index);
+      data.weekPoints = Math.min(2000,data.weekPoints+task.point);
+      data.xp += task.point;
+      save();
+      render();
+    };
+    right.append(points,btn);
+    div.append(info,right);
+    area.appendChild(div);
+  });
+  document.getElementById("todayPoints").textContent = today+" pt";
+}
+render();
+</script>
+</body>
+</html>

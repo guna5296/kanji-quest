@@ -203,5 +203,130 @@ function render() {
 }
 render();
 </script>
+
+<section class="card" id="quizCard">
+  <h2 style="font-size:19px;margin-top:0">📝 漢字クイズ</h2>
+  <p class="notice" id="quizProgress">全5問に挑戦しよう！</p>
+  <h2 id="quizQuestion" style="text-align:center;font-size:32px">努力</h2>
+  <p style="text-align:center">この漢字の読み方は？</p>
+  <div id="quizChoices"></div>
+  <p id="quizFeedback" style="text-align:center;font-weight:bold"></p>
+  <div style="text-align:center">
+    <button id="nextQuiz" style="display:none">次の問題へ</button>
+  </div>
+</section>
+
+<script>
+const quizQuestions = [
+  {word:"努力",answer:"どりょく",choices:["どりょく","どりき","とうりょく","どりょっく"]},
+  {word:"安全",answer:"あんぜん",choices:["あんぜん","あんせん","あんぜい","あぜん"]},
+  {word:"原因",answer:"げんいん",choices:["げんいん","げんねん","げいいん","げんにん"]},
+  {word:"必要",answer:"ひつよう",choices:["ひつよう","ひっよう","ひつよ","ひちよう"]},
+  {word:"確実",answer:"かくじつ",choices:["かくじつ","かくしつ","かくじち","かくじゅつ"]}
+];
+
+let quizIndex = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function showQuiz() {
+  quizAnswered = false;
+  const q = quizQuestions[quizIndex];
+  document.getElementById("quizProgress").textContent =
+    "第"+(quizIndex+1)+"問 / 5問";
+  document.getElementById("quizQuestion").textContent = q.word;
+  document.getElementById("quizFeedback").textContent = "";
+  document.getElementById("nextQuiz").style.display = "none";
+
+  const area = document.getElementById("quizChoices");
+  area.innerHTML = "";
+
+  q.choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.style.display = "block";
+    btn.style.width = "100%";
+    btn.style.margin = "8px 0";
+    btn.style.background = "#596bd0";
+    btn.onclick = () => answerQuiz(choice, btn);
+    area.appendChild(btn);
+  });
+}
+
+function answerQuiz(choice, selectedButton) {
+  if(quizAnswered) return;
+  quizAnswered = true;
+
+  const q = quizQuestions[quizIndex];
+  const feedback = document.getElementById("quizFeedback");
+  const buttons = document.querySelectorAll("#quizChoices button");
+
+  buttons.forEach(btn => {
+    btn.disabled = true;
+    if(btn.textContent === q.answer) {
+      btn.style.background = "#16834a";
+    }
+  });
+
+  if(choice === q.answer) {
+    quizScore++;
+    feedback.textContent = "🎉 正解！すばらしい！";
+    feedback.style.color = "#16834a";
+  } else {
+    feedback.textContent = "惜しい！正解は「"+q.answer+"」";
+    feedback.style.color = "#d34c4c";
+  }
+
+  document.getElementById("nextQuiz").style.display = "inline-block";
+  document.getElementById("nextQuiz").textContent =
+    quizIndex === 4 ? "結果を見る" : "次の問題へ";
+}
+
+document.getElementById("nextQuiz").onclick = () => {
+  quizIndex++;
+  if(quizIndex < quizQuestions.length) {
+    showQuiz();
+  } else {
+    finishQuiz();
+  }
+};
+
+function finishQuiz() {
+  const area = document.getElementById("quizChoices");
+  area.innerHTML = "";
+  document.getElementById("quizQuestion").textContent =
+    quizScore+" / 5 問正解！";
+  document.getElementById("quizProgress").textContent = "クイズ終了！";
+  document.getElementById("quizFeedback").textContent =
+    "挑戦してくれてありがとう！";
+
+  const key = "kanjiQuizRewardDate";
+  if(localStorage.getItem(key) !== getDateKey()) {
+    const earned = quizScore * 10;
+    data.weekPoints = Math.min(2000, data.weekPoints + earned);
+    data.xp += earned;
+    localStorage.setItem(key, getDateKey());
+    save();
+    render();
+    document.getElementById("quizFeedback").textContent +=
+      " "+earned+"ポイント獲得！";
+  } else {
+    document.getElementById("quizFeedback").textContent +=
+      " 今日のクイズポイントは獲得済みです。";
+  }
+
+  const retry = document.createElement("button");
+  retry.textContent = "もう一度挑戦";
+  retry.onclick = () => {
+    quizIndex = 0;
+    quizScore = 0;
+    showQuiz();
+  };
+  area.appendChild(retry);
+}
+
+showQuiz();
+</script>
+
 </body>
 </html>

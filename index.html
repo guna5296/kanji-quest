@@ -153,29 +153,30 @@ function prepare() {
   data.xp = data.xp || 0;
   data.weekPoints = data.weekPoints || 0;
   data.done = data.done || [];
-  save();
+data.weakKanji = data.weakKanji || {};
+save();
 }
 function render() {
   prepare();
-  const total = data.xp;
-  const level = Math.floor(total/100)+1;
-  const xp = total%100;
+   total = data.xp;
+   level = Math.floor(total/100)+1;
+   xp = total%100;
   document.getElementById("level").textContent = "レベル "+level;
   document.getElementById("xpText").textContent = xp+" / 100 XP";
   document.getElementById("xpBar").style.width = xp+"%";
 
-  const wp = data.weekPoints;
+   wp = data.weekPoints;
   document.getElementById("weeklyPoints").textContent = wp;
   document.getElementById("money").textContent = Math.min(200,Math.floor(wp/10))+"円";
   document.getElementById("moneyBar").style.width = Math.min(100,wp/20)+"%";
 
   let today = 0;
-  const area = document.getElementById("missions");
+   area = document.getElementById("missions");
   area.innerHTML = "";
   tasks.forEach((task,index) => {
-    const done = data.done.includes(index);
+     done = data.done.includes(index);
     if(done) today += task.point;
-    const div = document.createElement("div");
+     div = document.createElement("div");
     div.className = "mission";
     const info = document.createElement("div");
     info.innerHTML = "<strong>"+task.name+"</strong><div class='notice'>"+task.detail+"</div>";
@@ -214,9 +215,12 @@ render();
   <div style="text-align:center">
     <button id="nextQuiz" style="display:none">次の問題へ</button>
   </div>
+<section class="card">
+  <h2 style="font-size:19px;margin-top:0">💡 苦手漢字リスト</h2>
+  <div id="weakKanjiList">
+    まだ苦手な漢字はありません。
+  </div>
 </section>
-
-<script src="questions.js"></script>
 <script>
 const allQuizQuestions = window.KANJI_QUESTIONS;
 let quizQuestions = [];
@@ -225,9 +229,22 @@ let quizScore = 0;
 let quizAnswered = false;
 
 function startQuiz() {
-  quizQuestions = [...allQuizQuestions]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 10);
+  const weakQuestions = allQuizQuestions.filter(q =>
+    data.weakKanji[q.word] &&
+    data.weakKanji[q.word].mistakes > data.weakKanji[q.word].correct
+  );
+
+  const normalQuestions = allQuizQuestions.filter(q =>
+    !weakQuestions.includes(q)
+  );
+
+  const shuffledWeak = [...weakQuestions]
+    .sort(() => Math.random() - 0.5);
+
+  const shuffledNormal = [...normalQuestions]
+    .sort(() => Math.random() - 0.5);
+
+  quizQuestions = [...shuffledWeak, ...shuffledNormal].slice(0, 10);
 
   quizIndex = 0;
   quizScore = 0;
@@ -275,12 +292,26 @@ function answerQuiz(choice, selectedButton) {
 
   if(choice === q.answer) {
     quizScore++;
+     if(data.weakKanji[q.word]) {
+    data.weakKanji[q.word].correct++;
+    save();
+  }
     feedback.textContent = "🎉 正解！すばらしい！";
     feedback.style.color = "#16834a";
   } else {
-    feedback.textContent = "惜しい！正解は「"+q.answer+"」";
-    feedback.style.color = "#d34c4c";
+  feedback.textContent = "惜しい！正解は「"+q.answer+"」";
+  feedback.style.color = "#d34c4c";
+
+  const word = q.word;
+  if(!data.weakKanji[word]) {
+    data.weakKanji[word] = {
+      mistakes: 0,
+      correct: 0
+    };
   }
+  data.weakKanji[word].mistakes++;
+  save();
+}
 
   document.getElementById("nextQuiz").style.display = "inline-block";
   document.getElementById("nextQuiz").textContent =

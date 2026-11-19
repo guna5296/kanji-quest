@@ -227,7 +227,26 @@ let quizQuestions = [];
 let quizIndex = 0;
 let quizScore = 0;
 let quizAnswered = false;
+records.sort((a, b) =>
+    (b[1].mistakes - b[1].correct) -
+    (a[1].mistakes - a[1].correct)
+  );
 
+  records.forEach(([word, record]) => {
+    const item = document.createElement("p");
+
+    const status = record.mistakes > record.correct
+      ? "復習中"
+      : "克服！";
+
+    item.textContent =
+      word + "：間違い " + record.mistakes +
+      "回 / 正解 " + record.correct +
+      "回（" + status + "）";
+
+    area.appendChild(item);
+  });
+}
 function startQuiz() {
   const weakQuestions = allQuizQuestions.filter(q =>
     data.weakKanji[q.word] &&
@@ -312,7 +331,7 @@ function answerQuiz(choice, selectedButton) {
   data.weakKanji[word].mistakes++;
   save();
 }
-
+renderWeakKanji();
   document.getElementById("nextQuiz").style.display = "inline-block";
   document.getElementById("nextQuiz").textContent =
     quizIndex === quizQuestions.length - 1 ? "結果を見る" : "次の問題へ";
@@ -362,6 +381,7 @@ function finishQuiz() {
   area.appendChild(retry);
 }
 
+renderWeakKanji();
 startQuiz();
 </script>
 

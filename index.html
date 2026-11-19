@@ -216,8 +216,10 @@ render();
   </div>
 </section>
 
+<script src="questions.js"></script>
 <script>
-const quizQuestions = [
+const allQuizQuestions = window.KANJI_QUESTIONS;
+let quizQuestions = [];
   {word:"努力",answer:"どりょく",choices:["どりょく","どりき","とうりょく","どりょっく"]},
   {word:"安全",answer:"あんぜん",choices:["あんぜん","あんせん","あんぜい","あぜん"]},
   {word:"原因",answer:"げんいん",choices:["げんいん","げんねん","げいいん","げんにん"]},
@@ -229,11 +231,19 @@ let quizIndex = 0;
 let quizScore = 0;
 let quizAnswered = false;
 
-function showQuiz() {
+function startQuiz() {
+  quizQuestions = [...allQuizQuestions]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10);
+
+  quizIndex = 0;
+  quizScore = 0;
+  showQuiz();
+}
   quizAnswered = false;
   const q = quizQuestions[quizIndex];
   document.getElementById("quizProgress").textContent =
-    "第"+(quizIndex+1)+"問 / 5問";
+    "第"+(quizIndex+1)+"問 / "+quizQuestions.length+"問";
   document.getElementById("quizQuestion").textContent = q.word;
   document.getElementById("quizFeedback").textContent = "";
   document.getElementById("nextQuiz").style.display = "none";
@@ -280,7 +290,7 @@ function answerQuiz(choice, selectedButton) {
 
   document.getElementById("nextQuiz").style.display = "inline-block";
   document.getElementById("nextQuiz").textContent =
-    quizIndex === 4 ? "結果を見る" : "次の問題へ";
+    quizIndex === quizQuestions.length - 1 ? "結果を見る" : "次の問題へ";
 }
 
 document.getElementById("nextQuiz").onclick = () => {
@@ -296,7 +306,7 @@ function finishQuiz() {
   const area = document.getElementById("quizChoices");
   area.innerHTML = "";
   document.getElementById("quizQuestion").textContent =
-    quizScore+" / 5 問正解！";
+    quizScore+" / "+quizQuestions.length+" 問正解！";
   document.getElementById("quizProgress").textContent = "クイズ終了！";
   document.getElementById("quizFeedback").textContent =
     "挑戦してくれてありがとう！";
@@ -318,15 +328,11 @@ function finishQuiz() {
 
   const retry = document.createElement("button");
   retry.textContent = "もう一度挑戦";
-  retry.onclick = () => {
-    quizIndex = 0;
-    quizScore = 0;
-    showQuiz();
-  };
+ retry.onclick = startQuiz;
   area.appendChild(retry);
 }
 
-showQuiz();
+startQuiz();
 </script>
 
 </body>

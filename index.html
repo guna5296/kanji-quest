@@ -297,32 +297,37 @@ document.getElementById("nextQuiz").onclick = () => {
 };
 
 function finishQuiz() {
-    document.getElementById("nextQuiz").style.display = "none";
+  const nextButton = document.getElementById("nextQuiz");
+  nextButton.style.display = "none";
+
   const area = document.getElementById("quizChoices");
   area.innerHTML = "";
+
   document.getElementById("quizQuestion").textContent =
-    quizScore+" / "+quizQuestions.length+" 問正解！";
+    quizScore + " / " + quizQuestions.length + " 問正解！";
+
   document.getElementById("quizProgress").textContent = "クイズ終了！";
-  document.getElementById("quizFeedback").textContent =
-    "挑戦してくれてありがとう！";
+
+  const feedback = document.getElementById("quizFeedback");
+  feedback.textContent = "挑戦してくれてありがとう！";
 
   const key = "kanjiQuizRewardDate";
-  if(localStorage.getItem(key) !== getDateKey()) {
+
+  if (localStorage.getItem(key) !== getDateKey()) {
     const earned = quizScore * 10;
     data.weekPoints = Math.min(2000, data.weekPoints + earned);
     data.xp += earned;
     localStorage.setItem(key, getDateKey());
-   save();
-document.getElementById("quizFeedback").textContent +=
-      " "+earned+"ポイント獲得！";
+    save();
+
+    feedback.textContent += " " + earned + "ポイント獲得！";
   } else {
-    document.getElementById("quizFeedback").textContent +=
-      " 今日のクイズポイントは獲得済みです。";
+    feedback.textContent += " 今日のクイズポイントは獲得済みです。";
   }
 
   const retry = document.createElement("button");
   retry.textContent = "もう一度挑戦";
- retry.onclick = startQuiz;
+  retry.onclick = startQuiz;
   area.appendChild(retry);
 }
 

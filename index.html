@@ -311,9 +311,8 @@ function finishQuiz() {
     data.weekPoints = Math.min(2000, data.weekPoints + earned);
     data.xp += earned;
     localStorage.setItem(key, getDateKey());
-    save();
-    render();
-    document.getElementById("quizFeedback").textContent +=
+   save();
+document.getElementById("quizFeedback").textContent +=
       " "+earned+"ポイント獲得！";
   } else {
     document.getElementById("quizFeedback").textContent +=

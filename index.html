@@ -1,11 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>漢字クエスト</title>
+
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -21,8 +25,15 @@ header {
   border-radius: 0 0 25px 25px;
 }
 
-header h1 { margin: 0 0 8px; font-size: 25px; }
-header p { margin: 0; opacity: .9; }
+header h1 {
+  margin: 0 0 8px;
+  font-size: 25px;
+}
+
+header p {
+  margin: 0;
+  opacity: .9;
+}
 
 main {
   max-width: 650px;
@@ -45,8 +56,15 @@ main {
   gap: 10px;
 }
 
-.label { color: #77819a; font-size: 13px; }
-.big { font-size: 27px; font-weight: bold; }
+.label {
+  color: #77819a;
+  font-size: 13px;
+}
+
+.big {
+  font-size: 27px;
+  font-weight: bold;
+}
 
 .bar {
   background: #e9ecf5;
@@ -72,7 +90,9 @@ main {
   border-bottom: 1px solid #edf0f6;
 }
 
-.mission:last-child { border: 0; }
+.mission:last-child {
+  border: 0;
+}
 
 .points {
   color: #596bd0;
@@ -96,7 +116,9 @@ button:disabled {
   cursor: default;
 }
 
-.mission button { min-width: 76px; }
+.mission button {
+  min-width: 76px;
+}
 
 .notice {
   color: #77819a;
@@ -149,6 +171,7 @@ footer {
 
 <main>
 
+  <!-- 冒険者ランク -->
   <section class="card">
     <div class="row">
       <div>
@@ -168,11 +191,14 @@ footer {
     </div>
   </section>
 
+  <!-- 週間ポイント -->
   <section class="card">
     <div class="row">
       <div>
         <div class="label">今週の交換ポイント</div>
-        <div class="big"><span id="weeklyPoints">0</span> pt</div>
+        <div class="big">
+          <span id="weeklyPoints">0</span> pt
+        </div>
       </div>
       <div style="font-size:35px">🪙</div>
     </div>
@@ -191,13 +217,18 @@ footer {
     </p>
   </section>
 
+  <!-- 今日のミッション -->
   <section class="card">
     <div class="row">
-      <h2 style="font-size:19px;margin:0">📜 今日のミッション</h2>
+      <h2 style="font-size:19px;margin:0">
+        📜 今日のミッション
+      </h2>
       <strong>⏱ 15分</strong>
     </div>
 
-    <p class="notice">ミッションを達成したら「達成！」を押そう。</p>
+    <p class="notice">
+      ミッションを達成したら「達成！」を押そう。
+    </p>
 
     <div id="missions"></div>
 
@@ -207,8 +238,11 @@ footer {
     </div>
   </section>
 
+  <!-- 今週の目標 -->
   <section class="card">
-    <h2 style="font-size:19px;margin-top:0">🎁 今週の目標</h2>
+    <h2 style="font-size:19px;margin-top:0">
+      🎁 今週の目標
+    </h2>
 
     <div class="row">
       <span>100円</span>
@@ -226,13 +260,16 @@ footer {
     </div>
 
     <p class="notice">
-      週間ポイントは毎週月曜日に更新されます。レベルと経験値は残ります。
+      週間ポイントは毎週月曜日に更新されます。
+      レベルと経験値は残ります。
     </p>
   </section>
 
   <!-- 漢字クイズ -->
   <section class="card" id="quizCard">
-    <h2 style="font-size:19px;margin-top:0">📝 漢字クイズ</h2>
+    <h2 style="font-size:19px;margin-top:0">
+      📝 漢字クイズ
+    </h2>
 
     <p class="notice" id="quizProgress">
       全10問に挑戦しよう！
@@ -272,42 +309,99 @@ footer {
   KANJI QUEST | 学習記録はこの端末に保存されます
 </footer>
 
-<!-- 基本データ管理 -->
+<!-- =====================================
+     基本データ管理
+===================================== -->
+
 <script>
+
 const tasks = [
-  {name:"今日の漢字の読み", detail:"読み問題に挑戦する", point:30},
-  {name:"漢字を書く練習", detail:"漢字の形を確認して練習する", point:40},
-  {name:"間違えた漢字の修正", detail:"間違いを見直して正しく書く", point:50},
-  {name:"苦手漢字の復習", detail:"苦手な漢字をもう一度確認する", point:50},
-  {name:"新しい漢字への挑戦", detail:"新しい漢字を学ぶ", point:50},
-  {name:"今日の振り返り", detail:"今日の学習を振り返る", point:30}
+  {
+    name: "今日の漢字の読み",
+    detail: "読み問題に挑戦する",
+    point: 30
+  },
+  {
+    name: "漢字を書く練習",
+    detail: "漢字の形を確認して練習する",
+    point: 40
+  },
+  {
+    name: "間違えた漢字の修正",
+    detail: "間違いを見直して正しく書く",
+    point: 50
+  },
+  {
+    name: "苦手漢字の復習",
+    detail: "苦手な漢字をもう一度確認する",
+    point: 50
+  },
+  {
+    name: "新しい漢字への挑戦",
+    detail: "新しい漢字を学ぶ",
+    point: 50
+  },
+  {
+    name: "今日の振り返り",
+    detail: "今日の学習を振り返る",
+    point: 30
+  }
 ];
 
 function getDateKey() {
   const d = new Date();
-  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+
+  return d.getFullYear() + "-" +
+    (d.getMonth() + 1) + "-" +
+    d.getDate();
 }
 
 function getWeekKey() {
   const d = new Date();
+
   const day = d.getDay() || 7;
-  d.setDate(d.getDate()-day+1);
-  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+
+  d.setDate(d.getDate() - day + 1);
+
+  return d.getFullYear() + "-" +
+    (d.getMonth() + 1) + "-" +
+    d.getDate();
 }
+
+/* 保存データ読み込み */
 
 let data;
 
 try {
-  data = JSON.parse(localStorage.getItem("kanjiQuestData")) || {};
+  data = JSON.parse(
+    localStorage.getItem("kanjiQuestData")
+  );
+
+  if (
+    !data ||
+    typeof data !== "object" ||
+    Array.isArray(data)
+  ) {
+    data = {};
+  }
+
 } catch(e) {
   data = {};
 }
 
+/* 保存 */
+
 function save() {
-  localStorage.setItem("kanjiQuestData", JSON.stringify(data));
+  localStorage.setItem(
+    "kanjiQuestData",
+    JSON.stringify(data)
+  );
 }
 
+/* データ準備・異常対策 */
+
 function prepare() {
+
   if(data.date !== getDateKey()) {
     data.date = getDateKey();
     data.done = [];
@@ -318,19 +412,73 @@ function prepare() {
     data.weekPoints = 0;
   }
 
-  data.xp = data.xp || 0;
-  data.weekPoints = data.weekPoints || 0;
-  data.done = data.done || [];
-  data.weakKanji = data.weakKanji || {};
+  if(!Number.isFinite(Number(data.xp))) {
+    data.xp = 0;
+  } else {
+    data.xp = Number(data.xp);
+  }
+
+  if(!Number.isFinite(Number(data.weekPoints))) {
+    data.weekPoints = 0;
+  } else {
+    data.weekPoints = Number(data.weekPoints);
+  }
+
+  if(!Array.isArray(data.done)) {
+    data.done = [];
+  }
+
+  if(
+    !data.weakKanji ||
+    typeof data.weakKanji !== "object" ||
+    Array.isArray(data.weakKanji)
+  ) {
+    data.weakKanji = {};
+  }
+
+  /* 苦手漢字データの異常対策 */
+
+  Object.keys(data.weakKanji).forEach(word => {
+
+    const record = data.weakKanji[word];
+
+    if(
+      !record ||
+      typeof record !== "object"
+    ) {
+      data.weakKanji[word] = {
+        mistakes: 0,
+        correct: 0
+      };
+
+      return;
+    }
+
+    record.mistakes =
+      Number.isFinite(Number(record.mistakes))
+        ? Number(record.mistakes)
+        : 0;
+
+    record.correct =
+      Number.isFinite(Number(record.correct))
+        ? Number(record.correct)
+        : 0;
+
+  });
 
   save();
 }
 
+/* 画面更新 */
+
 function render() {
+
   prepare();
 
   const total = data.xp;
+
   const level = Math.floor(total / 100) + 1;
+
   const xp = total % 100;
 
   document.getElementById("level").textContent =
@@ -344,7 +492,8 @@ function render() {
 
   const wp = data.weekPoints;
 
-  document.getElementById("weeklyPoints").textContent = wp;
+  document.getElementById("weeklyPoints").textContent =
+    wp;
 
   document.getElementById("money").textContent =
     Math.min(200, Math.floor(wp / 10)) + "円";
@@ -355,78 +504,135 @@ function render() {
   let today = 0;
 
   const area = document.getElementById("missions");
+
   area.innerHTML = "";
 
   tasks.forEach((task, index) => {
+
     const done = data.done.includes(index);
 
-    if(done) today += task.point;
+    if(done) {
+      today += task.point;
+    }
 
     const div = document.createElement("div");
+
     div.className = "mission";
 
     const info = document.createElement("div");
 
     info.innerHTML =
-      "<strong>" + task.name + "</strong><div class='notice'>" +
+      "<strong>" + task.name +
+      "</strong><div class='notice'>" +
       task.detail + "</div>";
 
     const right = document.createElement("div");
+
     right.style.textAlign = "right";
 
     const points = document.createElement("div");
+
     points.className = "points";
+
     points.textContent = "+" + task.point + " pt";
 
     const btn = document.createElement("button");
 
     btn.textContent = done ? "達成済み" : "達成！";
+
     btn.disabled = done;
 
     btn.onclick = () => {
-      if(data.done.includes(index)) return;
+
+      if(data.done.includes(index)) {
+        return;
+      }
 
       data.done.push(index);
-      data.weekPoints = Math.min(2000, data.weekPoints + task.point);
+
+      data.weekPoints = Math.min(
+        2000,
+        data.weekPoints + task.point
+      );
+
       data.xp += task.point;
 
       save();
+
       render();
     };
 
     right.append(points, btn);
+
     div.append(info, right);
+
     area.appendChild(div);
+
   });
 
   document.getElementById("todayPoints").textContent =
     today + " pt";
 }
 
+/* 基本データ初期表示 */
+
 render();
+
 </script>
 
-<!-- 問題データの読み込み -->
-<script src="questions.js"></script>
+<!-- =====================================
+     問題データ読み込み
+     questions.jsはindex.htmlと同じ階層
+===================================== -->
 
-<!-- クイズ機能 -->
+<script src="./questions.js?v=20261119"></script>
+
+<!-- =====================================
+     クイズ機能
+===================================== -->
+
 <script>
-const allQuizQuestions = window.KANJI_QUESTIONS;
+
+/* 問題データの取得と検査 */
+
+const allQuizQuestions =
+  Array.isArray(window.KANJI_QUESTIONS)
+    ? window.KANJI_QUESTIONS.filter(q =>
+        q &&
+        typeof q.word === "string" &&
+        typeof q.answer === "string" &&
+        Array.isArray(q.choices) &&
+        q.choices.length >= 2 &&
+        q.choices.includes(q.answer)
+      )
+    : [];
 
 let quizQuestions = [];
+
 let quizIndex = 0;
+
 let quizScore = 0;
+
 let quizAnswered = false;
 
-/* 苦手漢字リストの表示 */
+
+/* 苦手漢字リスト表示 */
+
 function renderWeakKanji() {
-  const area = document.getElementById("weakKanjiList");
-  const records = Object.entries(data.weakKanji || {});
+
+  const area =
+    document.getElementById("weakKanjiList");
+
+  const records =
+    Object.entries(data.weakKanji || {});
 
   area.innerHTML = "";
 
   if(records.length === 0) {
-    area.textContent = "まだ苦手な漢字はありません。";
+
+    area.textContent =
+      "まだ苦手な漢字はありません。";
+
     return;
   }
 
@@ -436,80 +642,130 @@ function renderWeakKanji() {
   );
 
   records.forEach(([word, record]) => {
+
     const item = document.createElement("p");
 
-    const status = record.mistakes > record.correct
-      ? "復習中"
-      : "克服！";
+    const status =
+      record.mistakes > record.correct
+        ? "復習中"
+        : "克服！";
 
     item.textContent =
-      word + "：間違い " + record.mistakes +
+      word +
+      "：間違い " + record.mistakes +
       "回 / 正解 " + record.correct +
       "回（" + status + "）";
 
     area.appendChild(item);
+
   });
 }
 
-/* クイズ開始・苦手漢字優先 */
+
+/* クイズ開始 */
+
 function startQuiz() {
-  if(!Array.isArray(allQuizQuestions) || allQuizQuestions.length === 0) {
+
+  if(
+    !Array.isArray(allQuizQuestions) ||
+    allQuizQuestions.length === 0
+  ) {
+
     document.getElementById("quizProgress").textContent =
-      "問題データを読み込めませんでした。questions.jsを確認してください。";
+      "問題データを読み込めませんでした。";
 
     document.getElementById("quizQuestion").textContent =
       "クイズを開始できません";
 
     document.getElementById("quizChoices").innerHTML = "";
+
+    document.getElementById("quizFeedback").textContent =
+      "questions.jsの読み込みと内容を確認してください。";
+
+    document.getElementById("nextQuiz").style.display =
+      "none";
+
     return;
   }
 
-  const weakQuestions = allQuizQuestions.filter(q =>
-    data.weakKanji[q.word] &&
-    data.weakKanji[q.word].mistakes > data.weakKanji[q.word].correct
-  );
+  /* 苦手漢字を優先 */
 
-  const normalQuestions = allQuizQuestions.filter(q =>
-    !weakQuestions.includes(q)
-  );
+  const weakQuestions =
+    allQuizQuestions.filter(q =>
+      data.weakKanji[q.word] &&
+      data.weakKanji[q.word].mistakes >
+      data.weakKanji[q.word].correct
+    );
 
-  const shuffledWeak = [...weakQuestions]
-    .sort(() => Math.random() - 0.5);
+  const normalQuestions =
+    allQuizQuestions.filter(q =>
+      !weakQuestions.includes(q)
+    );
 
-  const shuffledNormal = [...normalQuestions]
-    .sort(() => Math.random() - 0.5);
+  const shuffledWeak =
+    [...weakQuestions].sort(() =>
+      Math.random() - 0.5
+    );
 
-  quizQuestions = [...shuffledWeak, ...shuffledNormal].slice(0, 10);
+  const shuffledNormal =
+    [...normalQuestions].sort(() =>
+      Math.random() - 0.5
+    );
+
+  quizQuestions = [
+    ...shuffledWeak,
+    ...shuffledNormal
+  ].slice(0, 10);
 
   quizIndex = 0;
+
   quizScore = 0;
 
   showQuiz();
 }
 
+
 /* 問題表示 */
+
 function showQuiz() {
+
+  if(
+    quizIndex >= quizQuestions.length ||
+    quizQuestions.length === 0
+  ) {
+    finishQuiz();
+    return;
+  }
+
   quizAnswered = false;
 
   const q = quizQuestions[quizIndex];
 
   document.getElementById("quizProgress").textContent =
-    "第" + (quizIndex + 1) + "問 / " +
-    quizQuestions.length + "問";
+    "第" + (quizIndex + 1) +
+    "問 / " + quizQuestions.length + "問";
 
-  document.getElementById("quizQuestion").textContent = q.word;
+  document.getElementById("quizQuestion").textContent =
+    q.word;
 
-  document.getElementById("quizFeedback").textContent = "";
+  document.getElementById("quizFeedback").textContent =
+    "";
 
-  document.getElementById("nextQuiz").style.display = "none";
+  document.getElementById("nextQuiz").style.display =
+    "none";
 
-  const area = document.getElementById("quizChoices");
+  const area =
+    document.getElementById("quizChoices");
+
   area.innerHTML = "";
 
-  const shuffledChoices = [...q.choices]
-    .sort(() => Math.random() - 0.5);
+  const shuffledChoices =
+    [...q.choices].sort(() =>
+      Math.random() - 0.5
+    );
 
   shuffledChoices.forEach(choice => {
+
     const btn = document.createElement("button");
 
     btn.textContent = choice;
@@ -517,41 +773,57 @@ function showQuiz() {
     btn.onclick = () => answerQuiz(choice);
 
     area.appendChild(btn);
+
   });
 }
 
+
 /* 回答判定・苦手漢字記録 */
+
 function answerQuiz(choice) {
-  if(quizAnswered) return;
+
+  if(quizAnswered) {
+    return;
+  }
 
   quizAnswered = true;
 
   const q = quizQuestions[quizIndex];
 
-  const feedback = document.getElementById("quizFeedback");
+  const feedback =
+    document.getElementById("quizFeedback");
 
-  const buttons = document.querySelectorAll("#quizChoices button");
+  const buttons =
+    document.querySelectorAll("#quizChoices button");
 
   buttons.forEach(btn => {
+
     btn.disabled = true;
 
     if(btn.textContent === q.answer) {
       btn.style.background = "#16834a";
     }
+
   });
 
   if(choice === q.answer) {
+
     quizScore++;
 
     if(data.weakKanji[q.word]) {
+
       data.weakKanji[q.word].correct++;
+
       save();
     }
 
-    feedback.textContent = "🎉 正解！すばらしい！";
+    feedback.textContent =
+      "🎉 正解！すばらしい！";
+
     feedback.style.color = "#16834a";
 
   } else {
+
     feedback.textContent =
       "惜しい！正解は「" + q.answer + "」";
 
@@ -560,6 +832,7 @@ function answerQuiz(choice) {
     const word = q.word;
 
     if(!data.weakKanji[word]) {
+
       data.weakKanji[word] = {
         mistakes: 0,
         correct: 0
@@ -571,12 +844,15 @@ function answerQuiz(choice) {
     save();
   }
 
-  /* 回答後に苦手漢字一覧を更新 */
+  /* 苦手漢字一覧を更新 */
+
   renderWeakKanji();
 
-  const nextButton = document.getElementById("nextQuiz");
+  const nextButton =
+    document.getElementById("nextQuiz");
 
-  nextButton.style.display = "inline-block";
+  nextButton.style.display =
+    "inline-block";
 
   nextButton.textContent =
     quizIndex === quizQuestions.length - 1
@@ -584,66 +860,96 @@ function answerQuiz(choice) {
       : "次の問題へ";
 }
 
+
 /* 次の問題へ */
+
 document.getElementById("nextQuiz").onclick = () => {
+
   quizIndex++;
 
   if(quizIndex < quizQuestions.length) {
+
     showQuiz();
+
   } else {
+
     finishQuiz();
+
   }
 };
 
+
 /* クイズ終了・ポイント付与 */
+
 function finishQuiz() {
-  const nextButton = document.getElementById("nextQuiz");
+
+  const nextButton =
+    document.getElementById("nextQuiz");
+
   nextButton.style.display = "none";
 
-  const area = document.getElementById("quizChoices");
+  const area =
+    document.getElementById("quizChoices");
+
   area.innerHTML = "";
 
   document.getElementById("quizQuestion").textContent =
-    quizScore + " / " + quizQuestions.length + " 問正解！";
+    quizScore + " / " +
+    quizQuestions.length + " 問正解！";
 
   document.getElementById("quizProgress").textContent =
     "クイズ終了！";
 
-  const feedback = document.getElementById("quizFeedback");
+  const feedback =
+    document.getElementById("quizFeedback");
 
-  feedback.textContent = "挑戦してくれてありがとう！";
+  feedback.textContent =
+    "挑戦してくれてありがとう！";
 
   const key = "kanjiQuizRewardDate";
 
   if(localStorage.getItem(key) !== getDateKey()) {
+
     const earned = quizScore * 10;
 
-    data.weekPoints = Math.min(2000, data.weekPoints + earned);
+    data.weekPoints = Math.min(
+      2000,
+      data.weekPoints + earned
+    );
+
     data.xp += earned;
 
     localStorage.setItem(key, getDateKey());
 
     save();
+
     render();
 
     feedback.textContent +=
       " " + earned + "ポイント獲得！";
 
   } else {
+
     feedback.textContent +=
       " 今日のクイズポイントは獲得済みです。";
+
   }
 
   const retry = document.createElement("button");
 
   retry.textContent = "もう一度挑戦";
+
   retry.onclick = startQuiz;
 
   area.appendChild(retry);
+
 }
 
+
 /* 初期表示 */
+
 renderWeakKanji();
+
 startQuiz();
 
 </script>

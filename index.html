@@ -297,6 +297,7 @@ document.getElementById("nextQuiz").onclick = () => {
 };
 
 function finishQuiz() {
+    document.getElementById("nextQuiz").style.display = "none";
   const area = document.getElementById("quizChoices");
   area.innerHTML = "";
   document.getElementById("quizQuestion").textContent =
